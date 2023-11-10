@@ -1,7 +1,7 @@
 using AutoMapper;
-using Mango.Services.CouponAPI;
-using Mango.Services.CouponAPI.Data;
-using Mango.Services.CouponAPI.Extensions;
+using Mango.Services.ProductAPI;
+using Mango.Services.ProductAPI.Data;
+using Mango.Services.ProductAPI.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -36,7 +36,7 @@ builder.Services.AddSwaggerGen(option =>
             new OpenApiSecurityScheme
             {
                 Reference = new OpenApiReference
-                { 
+                {
                     Type = ReferenceType.SecurityScheme,
                     Id= JwtBearerDefaults.AuthenticationScheme
                 }
@@ -65,14 +65,14 @@ app.MapControllers();
 ApplyMigration();
 app.Run();
 
-void ApplyMigration() 
+void ApplyMigration()
 {
     using (var scope = app.Services.CreateScope())
     {
         var _db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
         if (_db.Database.GetPendingMigrations().Count() > 0)
-        { 
+        {
             _db.Database.Migrate();
         }
     }

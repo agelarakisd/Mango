@@ -1,6 +1,5 @@
 ﻿using Mango.Services.CouponAPI.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Data;
 
 namespace Mango.Services.CouponAPI.Data
 {
