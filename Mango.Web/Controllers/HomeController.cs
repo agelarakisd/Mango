@@ -1,3 +1,4 @@
+using IdentityModel;
 using Mango.Web.Models;
 using Mango.Web.Service.IService;
 using Microsoft.AspNetCore.Authorization;
@@ -10,9 +11,11 @@ namespace Mango.Web.Controllers
     public class HomeController : Controller
     {
         private readonly IProductService _productService;
-        public HomeController(IProductService productService)
+        private readonly ICartService _carService;
+        public HomeController(IProductService productService, ICartService carService)
         {
             _productService = productService;
+            _carService = carService;
         }
 
         public async Task<IActionResult> Index()
@@ -55,6 +58,43 @@ namespace Mango.Web.Controllers
         public IActionResult Privacy()
         {
             return View();
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ActionName("ProductDetails")]
+        public async Task<IActionResult> ProductDetails(ProductDTO productDTO)
+        {
+            CartDTO cartDTO = new CartDTO()
+            {
+                CartHeader = new CartHeaderDTO
+                {
+                    UserId = User.Claims.Where(u => u.Type == JwtClaimTypes.Subject)?.FirstOrDefault()?.Value
+                }
+            };
+
+            CartDetailsDTO cartDetails = new CartDetailsDTO()
+            {
+                Count = productDTO.Count,
+                ProductId = productDTO.ProductId
+            };
+
+            List<CartDetailsDTO> cartDetailsDTOs = new() { cartDetails};
+            cartDTO.CartDetails = cartDetailsDTOs;
+
+            ResponseDTO? response = await _carService.UpsertCartAsync(cartDTO);
+
+            if (response != null && response.IsSuccess)
+            {
+                TempData["success"] = "item has been added to ur cart";
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+
+            return View(productDTO);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
