@@ -1,8 +1,7 @@
 ﻿using Mango.Services.EmailAPI.Messaging;
-using Microsoft.Extensions.DependencyInjection;
-using System.Runtime.CompilerServices;
+using System.Reflection.Metadata;
 
-namespace Mango.Services.EmailAPI.Extensions
+namespace Mango.Services.EmailAPI.Extension
 {
     public static class ApplicationBuilderExtensions
     {
@@ -14,17 +13,17 @@ namespace Mango.Services.EmailAPI.Extensions
             var hostApplicationLife = app.ApplicationServices.GetService<IHostApplicationLifetime>();
 
             hostApplicationLife.ApplicationStarted.Register(OnStart);
-            hostApplicationLife.ApplicationStarted.Register(OnStop);
+            hostApplicationLife.ApplicationStopping.Register(OnStop);
 
             return app;
         }
 
         private static void OnStop()
-        {   
+        {
             ServiceBusConsumer.Stop();
         }
 
-        private static void OnStart() 
+        private static void OnStart()
         {
             ServiceBusConsumer.Start();
         }

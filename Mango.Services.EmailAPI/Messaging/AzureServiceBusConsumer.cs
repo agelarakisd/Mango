@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Mango.Services.EmailAPI.Messaging
 {
-    public class AzureServiceBusConsumer :IAzureServiceBusConsumer
+    public class AzureServiceBusConsumer : IAzureServiceBusConsumer
     {
         private readonly string serviceBusConnectionString;
         private readonly string emailCartQueue;
@@ -41,18 +41,21 @@ namespace Mango.Services.EmailAPI.Messaging
 
         private async Task OnEmailCartRequestReceived(ProcessMessageEventArgs args)
         {
+            //this is where you will receive message
             var message = args.Message;
             var body = Encoding.UTF8.GetString(message.Body);
 
             CartDTO objMessage = JsonConvert.DeserializeObject<CartDTO>(body);
-            try 
+            try
             {
+                //TODO - try to log email
                 await args.CompleteMessageAsync(args.Message);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 throw;
             }
+
         }
 
         private Task ErrorHandler(ProcessErrorEventArgs args)

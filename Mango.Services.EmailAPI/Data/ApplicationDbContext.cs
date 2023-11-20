@@ -11,5 +11,6 @@ namespace Mango.Services.EmailAPI.Data
 
         public DbSet<EmailLogger> EmailLoggers { get; set; }
 
+
     }
 }
